@@ -1330,5 +1330,26 @@
     renderProducts();
     updateCartUI();
   </script>
+
+<script>
+/* ===== DDX AUTO CHECKOUT ===== */
+const ORDER_BOT = 'ddxautobot';
+const CODE_MAP = {
+  cozy_kitchen_bundle:'p1', summer_3d_splash_pack:'p2', kawaii_bakery_pack:'p3',
+  weird_monster_doodles:'p4', retro_camera_pack:'p5', camping_food_pack:'p6',
+  food_icons_collection:'p7', logo_starter_kit:'p8', sticker_sheet_vol1:'p9',
+  exclusive_kitchen_scene:'p10', free_watermelon_svg:'p11'
+};
+
+const _origShowCheckout = showCheckout;
+showCheckout = function() {
+  if (!cart.length) { toast("Cart is empty"); return; }
+  const codes = cart.map(i => CODE_MAP[i.id]).filter(Boolean);
+  if (!codes.length) { toast("Product not available"); return; }
+  const link = 'https://t.me/' + ORDER_BOT + '?start=ord_' + codes.join('-');
+  window.open(link, '_blank');
+};
+</script>
+  
 </body>
 </html>
