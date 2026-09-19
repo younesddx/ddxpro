@@ -377,6 +377,8 @@
       place-items: center;
       background:
         linear-gradient(135deg, var(--pink), var(--blue));
+      background-size: cover;
+      background-position: center;
     }
 
     .art.dark {
@@ -668,40 +670,6 @@
       flex: 1;
     }
 
-    .pay-card {
-      background: #f7f7f7;
-      border-radius: 20px;
-      padding: 14px;
-      margin-bottom: 10px;
-      border: 1px solid var(--line);
-    }
-
-    .pay-card b {
-      display: block;
-      margin-bottom: 7px;
-    }
-
-    .address {
-      background: white;
-      border-radius: 14px;
-      padding: 10px;
-      font-size: 12px;
-      overflow-wrap: anywhere;
-      color: #333;
-      margin-bottom: 8px;
-    }
-
-    .copy-btn {
-      border: none;
-      width: 100%;
-      border-radius: 14px;
-      padding: 10px;
-      background: var(--black);
-      color: white;
-      font-weight: 900;
-      cursor: pointer;
-    }
-
     .notice {
       background: #fff6fa;
       border: 1px solid #ffe1eb;
@@ -849,7 +817,7 @@
         <h2>Digital designs with a <span>soft future</span> aesthetic.</h2>
         <p class="hero-text">
           Download unique SVG bundles, cute stickers, logo templates and exclusive one-time designs.
-          Pay with USDT or RedotPay. Instant manual delivery through Telegram.
+          Pay with USDT or RedotPay. Instant delivery through Telegram.
         </p>
 
         <div class="hero-actions">
@@ -894,8 +862,8 @@
     <section id="productsArea">
       <div class="section-head">
         <div>
-          <h3>Featured DDX Drops</h3>
-          <p>Curated digital packs ready for your next creative project.</p>
+          <h3 id="sectionTitle">Stickers</h3>
+          <p id="sectionDesc">Cute sticker packs ready for your next creative project.</p>
         </div>
       </div>
 
@@ -949,48 +917,6 @@
 
     <div class="cart-items" id="cartItems"></div>
 
-    <div class="checkout-screen" id="checkoutScreen">
-      <div class="notice">
-        <b>Important:</b><br>
-        After payment, send a screenshot or transaction hash to
-        <b>@younesddx</b> on Telegram. Your ZIP files will be delivered manually.
-      </div>
-
-      <div class="pay-card">
-        <b>USDT — TRC20</b>
-        <div class="address" id="addrTrc">THj7C4yeXLZaAAjdrVp6s2kjp2dDanSTpe</div>
-        <button class="copy-btn" onclick="copyText('addrTrc')">Copy TRC20 Address</button>
-      </div>
-
-      <div class="pay-card">
-        <b>USDT — BNB Smart Chain / BEP20</b>
-        <div class="address" id="addrBnb">0x6c8d2e73902f6fd139e1bf25c587999dd50619c5</div>
-        <button class="copy-btn" onclick="copyText('addrBnb')">Copy BEP20 Address</button>
-      </div>
-
-      <div class="pay-card">
-        <b>USDT — Solana</b>
-        <div class="address" id="addrSol">EvRATfR49Min8eNWktgHR3RCeeoi3QZUMSv9BG2CPUkv</div>
-        <button class="copy-btn" onclick="copyText('addrSol')">Copy SOL Address</button>
-      </div>
-
-      <div class="pay-card">
-        <b>RedotPay ID</b>
-        <div class="address" id="redot">1934015858</div>
-        <button class="copy-btn" onclick="copyText('redot')">Copy RedotPay ID</button>
-      </div>
-
-      <div class="notice" id="orderSummary"></div>
-
-      <a class="btn btn-dark" style="width:100%; margin-top:8px;" href="https://t.me/younesddx">
-        💬 Send Payment Receipt
-      </a>
-
-      <a class="btn btn-light" style="width:100%; margin-top:8px;" href="https://t.me/ddx12bot?start=order">
-        🤖 Open DDX Bot
-      </a>
-    </div>
-
     <div class="checkout" id="checkoutBar">
       <div class="total">
         <span>Total</span>
@@ -1003,7 +929,6 @@
   <div class="toast" id="toast">Done</div>
 
   <script>
-    // Telegram Mini App Styling
     if (window.Telegram && Telegram.WebApp) {
       Telegram.WebApp.ready();
       Telegram.WebApp.expand();
@@ -1011,14 +936,9 @@
       Telegram.WebApp.setBackgroundColor("#ffffff");
     }
 
-    /*
-      IMPORTANT:
-      Replace emoji placeholders later with real image URLs if you want.
-      Example:
-      image: "https://yourdomain.com/images/kitchen.jpg"
-      Then change renderProduct art section to use image background.
-    */
-
+    // ========== المنتجات — عدّل كما تشاء ==========
+    // لإضافة منتج جديد: انسخ أي كتلة {} ولصقها قبل ];
+    // لتغيير الصورة: ضع رابط الصورة في image: "..."
     const PRODUCTS = [
       {
         id: "cozy_kitchen_bundle",
@@ -1026,6 +946,7 @@
         category: "Stickers",
         price: 15,
         emoji: "🏡",
+        image: "",
         style: "pink",
         badge: "BESTSELLER",
         desc: "Cute cozy kitchen scenes and elements for stickers, planners and wall art.",
@@ -1037,6 +958,7 @@
         category: "Stickers",
         price: 12,
         emoji: "🍉",
+        image: "",
         style: "blue",
         badge: "NEW",
         desc: "Watermelon, flamingo, ice cream and beach-style cute vector designs.",
@@ -1048,6 +970,7 @@
         category: "Stickers",
         price: 10,
         emoji: "🥐",
+        image: "",
         style: "pink",
         badge: "KAWAII",
         desc: "Sweet bakery illustrations for Asian cute style stickers and planners.",
@@ -1059,6 +982,7 @@
         category: "Stickers",
         price: 9,
         emoji: "👾",
+        image: "",
         style: "dark",
         badge: "GEN Z",
         desc: "Strange cute doodles for streetwear, laptop stickers and bold designs.",
@@ -1070,6 +994,7 @@
         category: "Icons",
         price: 8,
         emoji: "📷",
+        image: "",
         style: "blue",
         badge: "RETRO",
         desc: "Vintage camera designs for photography lovers, stickers and prints.",
@@ -1081,6 +1006,7 @@
         category: "Icons",
         price: 11,
         emoji: "🍔",
+        image: "",
         style: "pink",
         badge: "FOOD",
         desc: "Burger, taco, pineapple and playful food icons for menus and apps.",
@@ -1092,6 +1018,7 @@
         category: "Logos",
         price: 18,
         emoji: "🏷️",
+        image: "",
         style: "dark",
         badge: "PRO",
         desc: "Editable logo concepts for small brands, shops, cafés and creators.",
@@ -1103,6 +1030,7 @@
         category: "Templates",
         price: 14,
         emoji: "📋",
+        image: "",
         style: "blue",
         badge: "PLANNER",
         desc: "Soft clean templates for digital planners, printable pages and notes.",
@@ -1114,6 +1042,7 @@
         category: "Exclusive",
         price: 75,
         emoji: "🔒",
+        image: "",
         style: "dark",
         badge: "ONE BUYER ONLY",
         desc: "A premium SVG sold once only. After purchase, it is removed forever.",
@@ -1125,6 +1054,7 @@
         category: "Deals",
         price: 10,
         emoji: "🎁",
+        image: "",
         style: "pink",
         badge: "FLASH DEAL",
         desc: "A surprise pack of 50 random SVG designs from the DDX vault.",
@@ -1132,9 +1062,19 @@
       }
     ];
 
-    const CATEGORIES = ["All", "Stickers", "Icons", "Logos", "Templates", "Exclusive", "Deals"];
+    // ========== الأقسام — بدون All ==========
+    const CATEGORIES = ["Stickers", "Icons", "Logos", "Templates", "Exclusive", "Deals"];
 
-    let currentCategory = "All";
+    const SECTION_META = {
+      Stickers: { title: "Stickers", desc: "Cute sticker packs ready for your next creative project." },
+      Icons:    { title: "Icons",    desc: "Clean icon sets for apps, menus and digital products." },
+      Logos:    { title: "Logos",    desc: "Editable logo templates for small brands and creators." },
+      Templates:{ title: "Templates",desc: "Planner and printable templates for digital products." },
+      Exclusive:{ title: "Exclusive",desc: "One-time designs. Sold once, removed forever." },
+      Deals:    { title: "Deals",    desc: "Limited-time offers and flash bundles." }
+    };
+
+    let currentCategory = "Stickers";
     let cart = JSON.parse(localStorage.getItem("ddx_cart") || "[]");
 
     function saveCart() {
@@ -1153,7 +1093,6 @@
 
     function categoryIcon(cat) {
       return {
-        All: "✨",
         Stickers: "🎀",
         Icons: "🎯",
         Logos: "🏷️",
@@ -1165,6 +1104,9 @@
 
     function setCategory(cat) {
       currentCategory = cat;
+      const meta = SECTION_META[cat] || { title: cat, desc: "" };
+      document.getElementById("sectionTitle").textContent = meta.title;
+      document.getElementById("sectionDesc").textContent = meta.desc;
       renderCategories();
       renderProducts();
     }
@@ -1173,13 +1115,11 @@
       const q = document.getElementById("searchInput").value.toLowerCase().trim();
 
       const filtered = PRODUCTS.filter(p => {
-        const inCat = currentCategory === "All" || p.category === currentCategory;
-        const inSearch =
+        const inCat = p.category === currentCategory;
+        const inSearch = !q ||
           p.title.toLowerCase().includes(q) ||
-          p.category.toLowerCase().includes(q) ||
           p.desc.toLowerCase().includes(q) ||
           p.tags.join(" ").toLowerCase().includes(q);
-
         return inCat && inSearch;
       });
 
@@ -1188,18 +1128,24 @@
       if (!filtered.length) {
         grid.innerHTML = `
           <div style="grid-column:1/-1; background:white; padding:25px; border-radius:24px; text-align:center;">
-            <b>No products found</b><br>
-            <span style="color:#777;">Try another search or category.</span>
+            <b>No products in this section yet</b><br>
+            <span style="color:#777;">Try another category.</span>
           </div>
         `;
         return;
       }
 
-      grid.innerHTML = filtered.map(p => `
+      grid.innerHTML = filtered.map(p => {
+        const artStyle = p.image
+          ? `style="background-image:url('${p.image}')"`
+          : `class="art ${p.style}"`;
+        const inner = p.image
+          ? `<div class="badge ${p.category === 'Exclusive' ? 'exclusive' : ''}">${p.badge}</div>`
+          : `<div class="badge ${p.category === 'Exclusive' ? 'exclusive' : ''}">${p.badge}</div><div class="emoji">${p.emoji}</div>`;
+        return `
         <article class="product">
-          <div class="art ${p.style}">
-            <div class="badge ${p.category === "Exclusive" ? "exclusive" : ""}">${p.badge}</div>
-            <div class="emoji">${p.emoji}</div>
+          <div ${artStyle} ${p.image ? 'class="art"' : ''}>
+            ${inner}
           </div>
 
           <div class="product-body">
@@ -1216,13 +1162,12 @@
             </div>
           </div>
         </article>
-      `).join("");
+      `}).join("");
     }
 
     function addToCart(id) {
       const product = PRODUCTS.find(p => p.id === id);
       if (!product) return;
-
       cart.push(product);
       saveCart();
       toast(`${product.title} added`);
@@ -1274,7 +1219,6 @@
     function openCart() {
       document.getElementById("overlay").classList.add("show");
       document.getElementById("drawer").classList.add("open");
-      document.getElementById("checkoutScreen").style.display = "none";
       document.getElementById("cartItems").style.display = "block";
       document.getElementById("checkoutBar").style.display = "block";
       document.getElementById("drawerTitle").textContent = "Your Cart";
@@ -1291,19 +1235,10 @@
         toast("Cart is empty");
         return;
       }
-
-      document.getElementById("cartItems").style.display = "none";
-      document.getElementById("checkoutBar").style.display = "none";
-      document.getElementById("checkoutScreen").style.display = "block";
-      document.getElementById("drawerTitle").textContent = "Crypto Checkout";
-
-      const list = cart.map(i => `• ${i.title} — $${i.price}`).join("<br>");
-      document.getElementById("orderSummary").innerHTML = `
-        <b>Order Summary</b><br>
-        ${list}<br><br>
-        <b>Total: $${cartTotal()} USDT</b><br><br>
-        Send exactly this amount, then contact @younesddx with your receipt.
-      `;
+      const codes = cart.map(i => CODE_MAP[i.id]).filter(Boolean);
+      if (!codes.length) { toast("Product not available"); return; }
+      const link = 'https://t.me/' + ORDER_BOT + '?start=ord_' + codes.join('-');
+      window.open(link, '_blank');
     }
 
     function copyText(id) {
@@ -1326,30 +1261,24 @@
       document.getElementById("productsArea").scrollIntoView({behavior: "smooth"});
     }
 
+    // ========== ربط المتجر بالبوت — موحّد مع أسماء PRODUCTS ==========
+    const ORDER_BOT = 'ddxautobot';
+    const CODE_MAP = {
+      cozy_kitchen_bundle: 'p1',
+      summer_3d_pack: 'p2',
+      kawaii_bakery_pack: 'p3',
+      monster_doodle_pack: 'p4',
+      retro_camera_pack: 'p5',
+      food_icons_pack: 'p6',
+      logo_templates_pack: 'p7',
+      planner_templates: 'p8',
+      exclusive_one: 'p9',
+      mystery_bundle_50: 'p10'
+    };
+
     renderCategories();
-    renderProducts();
+    setCategory("Stickers");
     updateCartUI();
   </script>
-
-<script>
-/* ===== DDX AUTO CHECKOUT ===== */
-const ORDER_BOT = 'ddxautobot';
-const CODE_MAP = {
-  cozy_kitchen_bundle:'p1', summer_3d_splash_pack:'p2', kawaii_bakery_pack:'p3',
-  weird_monster_doodles:'p4', retro_camera_pack:'p5', camping_food_pack:'p6',
-  food_icons_collection:'p7', logo_starter_kit:'p8', sticker_sheet_vol1:'p9',
-  exclusive_kitchen_scene:'p10', free_watermelon_svg:'p11'
-};
-
-const _origShowCheckout = showCheckout;
-showCheckout = function() {
-  if (!cart.length) { toast("Cart is empty"); return; }
-  const codes = cart.map(i => CODE_MAP[i.id]).filter(Boolean);
-  if (!codes.length) { toast("Product not available"); return; }
-  const link = 'https://t.me/' + ORDER_BOT + '?start=ord_' + codes.join('-');
-  window.open(link, '_blank');
-};
-</script>
-  
 </body>
 </html>
