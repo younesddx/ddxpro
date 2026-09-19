@@ -136,7 +136,7 @@
     /* ART (emoji fallback) */
     .art {
       height: 210px; margin: 12px; border-radius: 22px; position: relative; overflow: hidden;
-      display: grid; place-items: center;
+      display: grid; place-items: center; cursor: pointer;
       background: linear-gradient(135deg, var(--pink), var(--blue));
     }
     .art.dark {
@@ -150,7 +150,7 @@
     .art .emoji { font-size: 62px; filter: drop-shadow(0 12px 15px rgba(0,0,0,0.12)); }
 
     /* GALLERY (swipe images) */
-    .gallery { position: relative; height: 210px; margin: 12px; border-radius: 22px; overflow: hidden; background: #111; }
+    .gallery { position: relative; height: 210px; margin: 12px; border-radius: 22px; overflow: hidden; background: #111; cursor: pointer; }
     .gallery-track {
       display: flex; height: 100%; overflow-x: auto;
       scroll-snap-type: x mandatory; scrollbar-width: none;
@@ -172,13 +172,35 @@
     .exclusive { background: var(--black); color: white; }
 
     .product-body { padding: 0 16px 16px; }
-    .product h4 { margin: 0; font-size: 17px; letter-spacing: -0.3px; }
+    .product h4 { margin: 0; font-size: 17px; letter-spacing: -0.3px; cursor: pointer; }
     .desc { color: var(--muted); font-size: 12.5px; line-height: 1.5; margin: 8px 0 12px; min-height: 38px; }
     .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 13px; }
     .tag { font-size: 11px; font-weight: 800; background: #f3f3f3; border-radius: 999px; padding: 6px 8px; color: #333; }
     .price-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
     .price { font-weight: 950; font-size: 20px; letter-spacing: -0.8px; }
     .small-btn { border: none; border-radius: 16px; padding: 11px 13px; background: var(--black); color: white; font-weight: 900; cursor: pointer; }
+
+    /* QUICK VIEW MODAL */
+    .qv-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 120; display: none; }
+    .qv-overlay.show { display: block; }
+    .qv {
+      position: fixed; z-index: 130; left: 50%; top: 50%; transform: translate(-50%,-50%);
+      width: min(480px, calc(100% - 24px)); max-height: 88vh; overflow: auto;
+      background: #fff; border-radius: 28px; box-shadow: 0 30px 80px rgba(0,0,0,0.35); display: none;
+    }
+    .qv.show { display: block; }
+    .qv-gallery { position: relative; height: 300px; background: #111; }
+    .qv-gallery .gallery-track { height: 100%; cursor: default; }
+    .qv-close {
+      position: absolute; right: 12px; top: 12px; z-index: 6;
+      width: 40px; height: 40px; border-radius: 50%; border: none;
+      background: rgba(255,255,255,0.92); font-size: 22px; cursor: pointer; line-height: 1;
+    }
+    .qv-body { padding: 18px; }
+    .qv-body h3 { margin: 0 0 8px; font-size: 22px; letter-spacing: -0.5px; }
+    .qv-body .desc { min-height: 0; margin: 8px 0 12px; font-size: 13.5px; }
+    .qv-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 14px; }
+    .qv-actions .price { font-size: 24px; }
 
     /* LICENSE */
     .license-box {
@@ -239,7 +261,7 @@
     .toast {
       position: fixed; left: 50%; bottom: 92px; transform: translateX(-50%) translateY(20px);
       background: var(--black); color: white; padding: 12px 16px; border-radius: 999px;
-      opacity: 0; pointer-events: none; transition: 0.2s; z-index: 200;
+      opacity: 0; pointer-events: none; transition: 0.2s; z-index: 300;
       font-weight: 800; font-size: 13px; box-shadow: var(--shadow);
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -256,6 +278,7 @@
       .telegram-chip { display: none; }
       .grid { grid-template-columns: 1fr; }
       .art, .gallery { height: 220px; }
+      .qv-gallery { height: 260px; }
       .toolbar-inner { border-radius: 22px; }
       .floating { border-radius: 22px; }
       .floating-info span { display: none; }
@@ -388,6 +411,25 @@
     </div>
   </aside>
 
+  <!-- QUICK VIEW MODAL -->
+  <div class="qv-overlay" id="qvOverlay" onclick="closeQuickView()"></div>
+  <div class="qv" id="qv">
+    <div class="qv-gallery">
+      <button class="qv-close" onclick="closeQuickView()">×</button>
+      <div class="gallery-track" id="qvTrack" onscroll="moveQvDots(this)"></div>
+      <div class="dots" id="qvDots"></div>
+    </div>
+    <div class="qv-body">
+      <h3 id="qvTitle"></h3>
+      <p class="desc" id="qvDesc"></p>
+      <div class="meta" id="qvTags"></div>
+      <div class="qv-actions">
+        <div class="price" id="qvPrice"></div>
+        <button class="btn btn-dark" onclick="qvAddToCart()">🛒 Add to Cart</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast">Done</div>
 
   <script>
@@ -404,8 +446,8 @@
        • price    : السعر بالدولار
        • category : القسم (من قائمة CATEGORIES أسفل)
        • images   : صور المنتج (تُسحب يمين/يسار) مثال:
-            images: ["kitchen1.jpg", "kitchen2.jpg"]
-         بعد رفع الصور في المستودع (Add file → Upload files)
+            images: ["kitchen1.png", "kitchen2.png"]
+         بعد رفع الصور في المستودع (زر + → Upload files)
          إذا تركتها فارغة  images: []  يظهر الرمز emoji بدلاً منها
        • emoji / style / badge / desc / tags : كما تعلمها
        ========================================================== */
@@ -416,7 +458,7 @@
         category: "Stickers",
         price: 15,
         emoji: "🏡",
-        images: [],
+        images: ["kitchen1.png", "kitchen2.png", "kitchen3.png"],
         style: "pink",
         badge: "BESTSELLER",
         desc: "Cute cozy kitchen scenes and elements for stickers, planners and wall art.",
@@ -547,6 +589,7 @@
 
     let currentCategory = "Stickers";
     let cart = JSON.parse(localStorage.getItem("ddx_cart") || "[]");
+    let qvProduct = null;
 
     function saveCart() {
       localStorage.setItem("ddx_cart", JSON.stringify(cart));
@@ -582,7 +625,7 @@
       const imgs = p.images.map(src => `<img src="${src}" alt="${p.title}" loading="lazy">`).join("");
       const dots = p.images.map((_, i) => `<span class="dot ${i === 0 ? "on" : ""}"></span>`).join("");
       return `
-        <div class="gallery">
+        <div class="gallery" onclick="openQuickView('${p.id}')">
           <div class="badge ${p.category === "Exclusive" ? "exclusive" : ""}">${p.badge}</div>
           <div class="gallery-track" onscroll="moveDots(this)">${imgs}</div>
           <div class="dots">${dots}</div>
@@ -593,6 +636,49 @@
       const i = Math.round(track.scrollLeft / track.clientWidth);
       const dots = track.parentElement.querySelectorAll(".dot");
       dots.forEach((d, k) => d.classList.toggle("on", k === i));
+    }
+
+    /* ========== الشاشة المنبثقة Quick View ========== */
+    function openQuickView(id) {
+      qvProduct = PRODUCTS.find(p => p.id === id);
+      if (!qvProduct) return;
+      const track = document.getElementById("qvTrack");
+      const imgs = qvProduct.images || [];
+      if (imgs.length) {
+        track.innerHTML = imgs.map(s => `<img src="${s}" alt="">`).join("");
+        document.getElementById("qvDots").innerHTML =
+          imgs.map((_, i) => `<span class="dot ${i === 0 ? "on" : ""}"></span>`).join("");
+      } else {
+        track.innerHTML = `
+          <div class="art ${qvProduct.style}" style="margin:0;height:100%;border-radius:0;flex:0 0 100%;cursor:default;">
+            <div class="emoji" style="font-size:90px;">${qvProduct.emoji}</div>
+          </div>`;
+        document.getElementById("qvDots").innerHTML = "";
+      }
+      track.scrollLeft = 0;
+      document.getElementById("qvTitle").textContent = qvProduct.title;
+      document.getElementById("qvDesc").textContent = qvProduct.desc;
+      document.getElementById("qvTags").innerHTML = qvProduct.tags.map(t => `<span class="tag">${t}</span>`).join("");
+      document.getElementById("qvPrice").textContent = "$" + qvProduct.price;
+      document.getElementById("qvOverlay").classList.add("show");
+      document.getElementById("qv").classList.add("show");
+    }
+
+    function closeQuickView() {
+      document.getElementById("qvOverlay").classList.remove("show");
+      document.getElementById("qv").classList.remove("show");
+    }
+
+    function moveQvDots(track) {
+      const i = Math.round(track.scrollLeft / track.clientWidth);
+      const dots = document.getElementById("qvDots").children;
+      for (let k = 0; k < dots.length; k++) dots[k].classList.toggle("on", k === i);
+    }
+
+    function qvAddToCart() {
+      if (!qvProduct) return;
+      addToCart(qvProduct.id);
+      closeQuickView();
     }
 
     function renderProducts() {
@@ -623,7 +709,7 @@
         const visual = (p.images && p.images.length)
           ? galleryHTML(p)
           : `
-            <div class="art ${p.style}">
+            <div class="art ${p.style}" onclick="openQuickView('${p.id}')">
               <div class="badge ${p.category === "Exclusive" ? "exclusive" : ""}">${p.badge}</div>
               <div class="emoji">${p.emoji}</div>
             </div>`;
@@ -631,7 +717,7 @@
         <article class="product">
           ${visual}
           <div class="product-body">
-            <h4>${p.title}</h4>
+            <h4 onclick="openQuickView('${p.id}')">${p.title}</h4>
             <p class="desc">${p.desc}</p>
             <div class="meta">
               ${p.tags.map(t => `<span class="tag">${t}</span>`).join("")}
